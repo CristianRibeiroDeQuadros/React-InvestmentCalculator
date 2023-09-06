@@ -4,76 +4,74 @@ import InputGroup from './InputGroup';
 
 const Form = (props) => {
 
-    const [currentSavingsCapture, setCurrentSavingsCapture] = useState('')
-    const [yearlyContributionCapture, setYearlyContributionCapture] = useState('')
-    const [expectedReturnCapture, setExpectedReturnCapture] = useState('')
-    const [durationCapture, setDurationCapture] = useState('')
-
-    const currentSavingsCaptureFunction = (currentSavingsParam) => {
-        setCurrentSavingsCapture(currentSavingsParam)
+    //Object with the empty keys to be used as values for the inputs
+    let initialInputObject = {
+        'current-savings': '',
+        'yearly-contribution': '',
+        'expected-return': '',
+        'duration': ''
     }
 
-    const yearlyContributionCaptureFunction = (yearlyContributionParam) => {
-        setYearlyContributionCapture(yearlyContributionParam)
+    //State that defines an object with initial values using the object above
+    const [inputObject, setInputObject] = useState(initialInputObject)
+
+    //funtion that is being passed in the "inputUpdate" of the inputGroup component
+    const updateState = (inputId, newValue) => {
+        let inputChange = inputId
+        setInputObject((currentObject) => {
+            return{
+                ...currentObject,
+                [inputChange]: newValue
+            }
+        })
     }
 
-    const expectedReturnCaptureFunction = (expectedReturnParam) => {
-        setExpectedReturnCapture(expectedReturnParam)
-    }
-
-    const durationCaptureFunction = (durationParam) => {
-        setDurationCapture(durationParam)
-    }
-
+    //Function that is triggered when the form is submitted
     const calculateHandler = (userInput) => {
         userInput.preventDefault()
-        // Should be triggered when form is submitted
-        // You might not directly want to bind it to the submit event on the form though...
 
-        const yearlyData = []; // per-year results
+        //Empty array that will receive values to return the investment information
+        const yearlyData = [];
 
-        let currentSavings = +currentSavingsCapture // feel free to change the shape of this input object!
-        const yearlyContribution = +yearlyContributionCapture // as mentioned: feel free to change the shape...
-        const expectedReturn = +expectedReturnCapture / 100;
-        const duration = +durationCapture
+        //Variables to get the input values. They will be used to calculate the investment information
+        let currentSavings = +inputObject['current-savings']
+        const yearlyContribution = +inputObject['yearly-contribution']
+        const expectedReturn = +inputObject['expected-return'] / 100;
+        const duration = +inputObject['duration']
 
-        // The below code calculates yearly results (total savings, interest etc)
+        //Yearly results calculation (total savings, interest etc)
         for (let i = 0; i < duration; i++) {
             const yearlyInterest = currentSavings * expectedReturn;
             currentSavings += yearlyInterest + yearlyContribution;
+
+            //Values pushed to the previous empty array
             yearlyData.push({
-            // feel free to change the shape of the data pushed to the array!
-            year: i + 1,
-            yearlyInterest: yearlyInterest,
-            savingsEndOfYear: currentSavings,
-            yearlyContribution: yearlyContribution,
+                year: i + 1,
+                yearlyInterest: yearlyInterest,
+                savingsEndOfYear: currentSavings,
+                yearlyContribution: yearlyContribution,
             });
         }
 
-        // do something with yearlyData ..
+        //The function call below lifts the state to the "App" componente, where this one is being called
         props.throwInvestmentValues(yearlyData)
 
     };
 
+    //Function that resets the values when the "reset" button is clicked
     const resetHandler = () => {
         props.throwInvestmentValues([])
-        setCurrentSavingsCapture('')
-        setYearlyContributionCapture('')
-        setExpectedReturnCapture('')
-        setDurationCapture('')
+        setInputObject(initialInputObject)
     }
 
     return(
         <form className="form" onSubmit={calculateHandler}>
             <InputGroup 
-                currentSavingsInput={currentSavingsCaptureFunction}
-                yearlyContributionInput={yearlyContributionCaptureFunction}
-                expectedReturnInput={expectedReturnCaptureFunction}
-                durationInput={durationCaptureFunction}                
-                valueCurrentInvestment={currentSavingsCapture}
-                valueYearlyContribution={yearlyContributionCapture}
-                valueExpectedReturn={expectedReturnCapture}                
-                valueDuration={durationCapture}
+                inputUpdate={updateState}             
+                valueCurrentInvestment={inputObject['current-savings']}
+                valueYearlyContribution={inputObject['yearly-conrtibution']}
+                valueExpectedReturn={inputObject['expected-return']}
+                valueDuration={inputObject['duration']}
             />
             <p className="actions">
                 <button type="reset" className="buttonAlt" onClick={resetHandler} >
