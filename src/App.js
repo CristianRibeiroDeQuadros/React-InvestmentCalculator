@@ -1,6 +1,7 @@
 import Header from './components/Header';
 import Form from './components/Form'
 import Table from './components/Table';
+import NoDataYet from './components/NoDataYet';
 import { useState } from 'react';
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
     <div>
       <Header />
       <Form throwInvestmentValues={yearlyDataHandler}/>
-      <Table yearlyInvestInformation={yearlyData}/>
+      {yearlyData.length > 0 ? <Table yearlyInvestInformation={yearlyData}/> : <NoDataYet />}
     </div>
   );
 }

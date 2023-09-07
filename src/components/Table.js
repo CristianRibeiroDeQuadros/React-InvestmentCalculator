@@ -18,7 +18,6 @@ const Table = (props) => {
     return(
         /* Todo: Show below table conditionally (only once result data is available) */
         /* Show fallback text if no data is available */
-
         <table className="result">
             <thead>
                 <tr>
@@ -36,7 +35,7 @@ const Table = (props) => {
                     <td>TOTAL INVESTED CAPITAL</td>
                 </tr>
                 {investmentInformation.map(item => (
-                    tableRows(item.year, item.savingsEndOfYear, item.yearlyInterest, 50)
+                    tableRows(item.year, item.savingsEndOfYear, item.yearlyInterest, item.totalInvestedCapital)
                 ))}
             </tbody>            
         </table>

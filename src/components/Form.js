@@ -26,6 +26,17 @@ const Form = (props) => {
         })
     }
 
+    //Funtion that formats decimal numbers to brazilian currency
+    const toCurrencyFormat = (number) => {
+        const formatOptions = {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+        return number.toLocaleString('pt-BR', formatOptions)
+    }
+
     //Function that is triggered when the form is submitted
     const calculateHandler = (userInput) => {
         userInput.preventDefault()
@@ -47,9 +58,10 @@ const Form = (props) => {
             //Values pushed to the previous empty array
             yearlyData.push({
                 year: i + 1,
-                yearlyInterest: yearlyInterest,
-                savingsEndOfYear: currentSavings,
-                yearlyContribution: yearlyContribution,
+                yearlyInterest: toCurrencyFormat(yearlyInterest),
+                savingsEndOfYear: toCurrencyFormat(currentSavings),
+                yearlyContribution: toCurrencyFormat(yearlyContribution),
+                totalInvestedCapital: toCurrencyFormat(yearlyInterest+currentSavings)
             });
         }
 
